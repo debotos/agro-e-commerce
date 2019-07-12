@@ -8,10 +8,25 @@ import { uploadOneImage } from '../utils/cloudinary'
 const expiresTime: string = process.env.JWT_TIMEOUT || '60m'
 
 const createToken = async (user: any, secret: string, expiresIn: string) => {
-	const { id, email, username, role } = user
-	return await jwt.sign({ id, email, username, role }, secret, {
-		expiresIn
-	})
+	const { id, user_name, full_name, email, phone, role, image, division, region, address } = user
+	return await jwt.sign(
+		{
+			id,
+			email,
+			user_name,
+			role,
+			image: image ? image.secure_url : null,
+			full_name,
+			phone,
+			address,
+			region,
+			division
+		},
+		secret,
+		{
+			expiresIn
+		}
+	)
 }
 
 export default {
@@ -29,18 +44,29 @@ export default {
 	},
 
 	Mutation: {
-		signUp: async (
-			_: any,
-			{ username, email, password, role }: any,
-			{ models, jwtSecret }: any
-		) => {
+		signUp: async (_: any, { data }: any, { models, jwtSecret }: any) => {
 			interface signUpData {
-				username: string
+				user_name: string
+				full_name: string
 				email: string
+				phone: string
 				password: string
 				role?: string
+				division: string
+				region: string
+				address: string
 			}
-			let newUser: signUpData = { username, email, password }
+			const { user_name, full_name, email, phone, password, division, region, address, role } = data
+			let newUser: signUpData = {
+				user_name,
+				full_name,
+				email,
+				phone,
+				password,
+				division,
+				region,
+				address
+			}
 			if (role) {
 				if (role === 'ADMIN' || role === 'PARTNER') {
 					if (process.env.ADMIN_MODE) {
@@ -97,7 +123,7 @@ export default {
 
 				const { createReadStream }: any = await image
 				const stream = createReadStream()
-				const path = `${me.role}/${me.username}`
+				const path = `${me.role}/${me.user_name}`
 				const response = await uploadOneImage(stream, path)
 				if (!response) {
 					throw new Error('Failed to upload profile image.')

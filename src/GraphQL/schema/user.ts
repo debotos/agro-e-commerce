@@ -8,7 +8,7 @@ export default gql`
 	}
 
 	extend type Mutation {
-		signUp(username: String!, email: String!, password: String!, role: Role): Token!
+		signUp(data: signUpInput): Token!
 		signIn(login: String!, password: String!): Token!
 		changeProfileImage(image: Upload!): Image!
 		deleteUser(id: ID!): Boolean!
@@ -18,18 +18,17 @@ export default gql`
 		token: String!
 	}
 
-	enum Role {
-		ADMIN
-		PARTNER
-		CONSUMER
-	}
-
 	type User {
 		id: ID!
-		username: String!
+		full_name: String!
+		user_name: String!
 		email: String!
+		phone: String!
 		role: Role!
 		image: Image
+		division: String!
+		region: String!
+		address: String!
 		messages: [Message!]
 	}
 
@@ -47,5 +46,23 @@ export default gql`
 		type: String
 		url: String!
 		secure_url: String!
+	}
+
+	input signUpInput {
+		full_name: String!
+		user_name: String!
+		email: String!
+		phone: String!
+		password: String!
+		role: Role
+		division: String!
+		region: String!
+		address: String!
+	}
+
+	enum Role {
+		ADMIN
+		PARTNER
+		CONSUMER
 	}
 `
