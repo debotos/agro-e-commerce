@@ -9,28 +9,37 @@ const user = (sequelize: any, DataTypes: any) => {
 			type: DataTypes.UUID,
 			defaultValue: DataTypes.UUIDV4
 		},
-		username: {
+		full_name: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: { len: [3, 100], notEmpty: { args: true, msg: 'Full name is required.' } }
+		},
+		user_name: {
 			type: DataTypes.STRING,
 			unique: { args: true, msg: 'Username is already taken.' },
 			allowNull: false,
-			validate: { notEmpty: true }
+			validate: { len: [3, 60], notEmpty: { args: true, msg: 'Username is required.' } }
 		},
 		email: {
 			type: DataTypes.STRING,
 			unique: { args: true, msg: 'Email already exist!' },
 			allowNull: false,
 			validate: {
-				notEmpty: true,
+				len: [3, 100],
+				notEmpty: { args: true, msg: 'Email is required.' },
 				isEmail: true
 			}
+		},
+		phone: {
+			type: DataTypes.STRING,
+			unique: { args: true, msg: 'Phone number belongs to someone else!' },
+			allowNull: false,
+			validate: { len: [11, 13], notEmpty: { args: true, msg: 'Phone number is required.' } }
 		},
 		password: {
 			type: DataTypes.STRING,
 			allowNull: false,
-			validate: {
-				notEmpty: true,
-				len: [7, 42]
-			}
+			validate: { len: [6, 42], notEmpty: { args: true, msg: 'Password is required.' } }
 		},
 		role: {
 			type: DataTypes.ENUM,
@@ -47,6 +56,21 @@ const user = (sequelize: any, DataTypes: any) => {
 		image: {
 			type: DataTypes.JSON,
 			allowNull: true
+		},
+		division: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: { len: [3, 100], notEmpty: { args: true, msg: 'Division is required.' } }
+		},
+		region: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: { len: [3, 100], notEmpty: { args: true, msg: 'Region is required.' } }
+		},
+		address: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: { len: [3, 200], notEmpty: { args: true, msg: 'Residence Address is required.' } }
 		}
 	})
 
