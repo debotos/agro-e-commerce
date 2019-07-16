@@ -16,8 +16,11 @@ if (url && process.env.NODE_ENV === 'production') {
 }
 
 const models: { [key: string]: any } = {
+	/* All Model Imports */
 	User: sequelize.import('./user'),
-	Message: sequelize.import('./message')
+	Message: sequelize.import('./message'),
+	Category: sequelize.import('./category'),
+	Product: sequelize.import('./product')
 }
 
 Object.keys(models).forEach(key => {

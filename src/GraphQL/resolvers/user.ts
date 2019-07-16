@@ -32,7 +32,9 @@ const createToken = async (user: any, secret: string, expiresIn: string) => {
 export default {
 	Query: {
 		users: async (_: any, __: any, { models }: any) => {
-			return await models.User.findAll()
+			return await models.User.findAll({
+				order: [['createdAt', 'DESC']]
+			})
 		},
 		user: async (_: any, { id }: any, { models }: any) => {
 			return await models.User.findByPk(id)
