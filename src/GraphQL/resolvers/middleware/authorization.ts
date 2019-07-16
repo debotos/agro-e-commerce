@@ -32,3 +32,13 @@ export const isMessageOwner = async (_: any, { id }: any, { models, me }: any) =
 
 	return skip
 }
+
+export const isProductOwner = async (_: any, { id }: any, { models, me }: any) => {
+	const product = await models.Product.findByPk(id, { raw: true })
+	if (!product) throw new UserInputError('Invalid product id.')
+	if (product.userId !== me.id) {
+		throw new ForbiddenError('Not authenticated as owner.')
+	}
+
+	return skip
+}

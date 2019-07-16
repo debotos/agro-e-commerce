@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
 	extend type Query {
-		products: [Product!]
+		products(offset: Int, cursor: String, limit: Int): ProductConnection!
 		product(id: ID!): Product
 	}
 
@@ -10,6 +10,16 @@ export default gql`
 		addProduct(data: productInput): Product!
 		deleteProduct(id: ID!): Boolean!
 		updateProduct(id: ID!): Product!
+	}
+
+	type ProductConnection {
+		edges: [Product!]!
+		pageInfo: ProductPageInfo!
+	}
+
+	type ProductPageInfo {
+		hasNextPage: Boolean!
+		endCursor: String!
 	}
 
 	type Product {
@@ -24,7 +34,8 @@ export default gql`
 		description: String!
 		gov_price: Float!
 		gov_price_extension: String!
-		products: [Product!]
+		user: User!
+		category: Category!
 	}
 
 	input productInput {
@@ -38,5 +49,6 @@ export default gql`
 		description: String!
 		gov_price: Float!
 		gov_price_extension: String!
+		categoryId: ID!
 	}
 `

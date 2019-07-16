@@ -101,7 +101,11 @@ const graphqlServer = new ApolloServer({
 				models,
 				me,
 				jwtSecret: process.env.JWT_SECRET,
-				loaders: { user: loaders.userLoader, product: loaders.productLoader }
+				loaders: {
+					user: loaders.userLoader,
+					product: loaders.productLoader,
+					category: loaders.categoryLoader
+				}
 			}
 		}
 

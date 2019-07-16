@@ -1,19 +1,18 @@
 import Sequelize from 'sequelize'
 import { combineResolvers } from 'graphql-resolvers'
+import { UserInputError } from 'apollo-server'
 
-import pubsub, { EVENTS } from '../subscription'
-import { isAuthenticated, isMessageOwner } from './middleware/authorization'
+import { isAuthenticated, isProductOwner } from './middleware/authorization'
 import { toCursorHash, fromCursorHash } from '../utils/cursor'
 
 export default {
 	Query: {
-		messages: async (_: any, { cursor, offset = 0, limit = 100 }: any, { models }: any) => {
+		products: async (_: any, { cursor, offset = 0, limit = 10 }: any, { models }: any) => {
 			/* 
-				The first page only retrieves the most recent messages in the list, 
-				so you can use the creation date of the last message as a cursor for the next page of messages.
+				The first page only retrieves the most recent products in the list, 
+				so you can use the creation date of the last product as a cursor for the next page of products.
 			*/
-
-			const messages = await models.Message.findAll({
+			const messages = await models.Product.findAll({
 				order: [
 					['createdAt', 'DESC']
 				] /* First, the list should be ordered by createdAt date, otherwise the cursor won’t help */,
@@ -48,46 +47,40 @@ export default {
 				}
 			}
 		},
-		message: async (_: any, { id }: any, { models }: any) => {
-			return await models.Message.findByPk(id)
+		product: async (_: any, { id }: any, { models }: any) => {
+			return await models.Product.findByPk(id)
 		}
 	},
 
 	Mutation: {
-		createMessage: combineResolvers(
+		addProduct: combineResolvers(
 			isAuthenticated,
-			async (_: any, { text }: any, { me, models }: any) => {
-				const message = await models.Message.create({
-					text,
+			async (_: any, { data }: any, { me, models }: any) => {
+				const category = await models.Category.findByPk(data.categoryId)
+				if (!category) throw new UserInputError('Invalid categoryId.')
+				return await models.Product.create({
+					...data,
 					userId: me.id
 				})
-
-				pubsub.publish(EVENTS.MESSAGE.CREATED, {
-					messageCreated: { message }
-				})
-
-				return message
 			}
 		),
 
-		deleteMessage: combineResolvers(
+		deleteProduct: combineResolvers(
 			isAuthenticated,
-			isMessageOwner,
+			isProductOwner,
 			async (_: any, { id }: any, { models }: any) => {
-				return await models.Message.destroy({ where: { id } })
+				return await models.Product.destroy({ where: { id } })
 			}
 		)
 	},
 
-	Message: {
-		user: async (message: any, __: any, { loaders }: any) => {
-			return await loaders.user.load(message.userId)
-		}
-	},
+	Product: {
+		user: async (product: any, __: any, { loaders }: any) => {
+			return await loaders.user.load(product.userId)
+		},
 
-	Subscription: {
-		messageCreated: {
-			subscribe: () => pubsub.asyncIterator(EVENTS.MESSAGE.CREATED)
+		category: async (product: any, __: any, { loaders }: any) => {
+			return await loaders.category.load(product.categoryId)
 		}
 	}
 }

@@ -41,9 +41,14 @@ export default {
 		)
 	},
 
-	Product: {
-		products: async (category: any, __: any, { loaders }: any) => {
-			return await loaders.product.load(category.id)
+	Category: {
+		products: async (category: any, __: any, { models }: any) => {
+			return await models.Product.findAll({
+				order: [['createdAt', 'DESC']],
+				where: {
+					categoryId: category.id
+				}
+			})
 		}
 	}
 }

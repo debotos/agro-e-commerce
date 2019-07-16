@@ -30,6 +30,7 @@ export default gql`
 		region: String!
 		address: String!
 		messages: [Message!]
+		products: [Product!]
 	}
 
 	type Image {

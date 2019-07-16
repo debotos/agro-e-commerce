@@ -93,6 +93,7 @@ const product = (sequelize: any, DataTypes: any) => {
 
 	Product.associate = (models: any) => {
 		Product.belongsTo(models.Category)
+		Product.belongsTo(models.User)
 	}
 
 	return Product

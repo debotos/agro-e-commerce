@@ -150,6 +150,14 @@ export default {
 					userId: user.id
 				}
 			})
+		},
+		products: async (user: any, __: any, { models }: any) => {
+			return await models.Product.findAll({
+				order: [['createdAt', 'DESC']],
+				where: {
+					userId: user.id
+				}
+			})
 		}
 	}
 }
