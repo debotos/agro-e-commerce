@@ -3,7 +3,8 @@ import { combineResolvers } from 'graphql-resolvers'
 import { AuthenticationError, UserInputError } from 'apollo-server'
 
 import { isAdmin, isAuthenticated } from './middleware/authorization'
-import { uploadOneImage } from '../utils/cloudinary'
+import { uploadOneImage, deleteImages } from '../utils/cloudinary'
+import logger from '../../common/logger'
 
 const expiresTime: string = process.env.JWT_TIMEOUT || '60m'
 
@@ -136,6 +137,24 @@ export default {
 		),
 
 		deleteUser: combineResolvers(isAdmin, async (_: any, { id }: any, { models }: any) => {
+			if (!id) {
+				throw new UserInputError('Invalid user id.')
+			}
+			const user = await models.User.findByPk(id)
+			if (!user) throw new UserInputError('Invalid user id.')
+			await deleteUserAsset(user, models)
+			return await models.User.destroy({
+				where: { id }
+			})
+		}),
+
+		deleteMe: combineResolvers(isAuthenticated, async (_: any, __: any, { me, models }: any) => {
+			const { id } = me
+			const user = await models.User.findByPk(id)
+			if (!user) {
+				logger.error(`User with ${id} doesn't exist in DB.`)
+			}
+			await deleteUserAsset(user, models)
 			return await models.User.destroy({
 				where: { id }
 			})
@@ -159,5 +178,34 @@ export default {
 				}
 			})
 		}
+	}
+}
+
+/* Regular Helper Function */
+
+const deleteUserAsset = async (user: any, models: any) => {
+	// 1. Delete user profile image from cloudinary
+	if (user.image) {
+		const public_ids = [user.image.public_id]
+		await deleteImages(public_ids)
+		logger.info(`Profie image deleted of user ${user.email}`)
+	}
+	// 2. Delete user products image from cloudinary
+	const products = await models.Product.findAll({ where: { userId: user.id } })
+	if (products) {
+		const public_ids = products
+			.map((x: any) => {
+				if (x.images) {
+					return x.images.map((image: any) => image.public_id)
+				} else {
+					return []
+				}
+			})
+			.flat()
+		if (public_ids.length > 0) {
+			await deleteImages(public_ids)
+			logger.info(`Total ${public_ids.length} images deleted from user ${user.email}`)
+		}
+		logger.info(`Total ${products.length} products deleted from user ${user.email}`)
 	}
 }

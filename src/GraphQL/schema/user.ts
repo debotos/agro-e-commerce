@@ -12,6 +12,7 @@ export default gql`
 		signIn(login: String!, password: String!): Token!
 		changeProfileImage(image: Upload!): Image!
 		deleteUser(id: ID!): Boolean!
+		deleteMe: Boolean!
 	}
 
 	type Token {

@@ -88,6 +88,10 @@ const product = (sequelize: any, DataTypes: any) => {
 				len: { args: [1, 70], msg: 'Gov.price extension length min: 1 and max: 70' },
 				notEmpty: { args: true, msg: 'Gov. Price extension is required.' }
 			}
+		},
+		images: {
+			type: DataTypes.ARRAY(DataTypes.JSON),
+			allowNull: true
 		}
 	})
 

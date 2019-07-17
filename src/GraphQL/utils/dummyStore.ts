@@ -104,6 +104,20 @@ export const CategoryWithProductData = (userId: string) => [
 				userId
 			},
 			{
+				name: 'Onion',
+				quantity: 200,
+				quantity_extension: 'kg',
+				price: 20,
+				price_extension: 'per kg',
+				available_now: true,
+				retailable: false,
+				description:
+					'Buy regular onion from us which provides you with dietary fiber, potassium, vitamins, etc. Regular potato provides 9-10 percent of your daily need. Regular potatoes offer more of this nutrient which helps control your blood pressure. Make a good curry with regular potato. You can make French fries and you can enjoy with your family members.',
+				gov_price: 20,
+				gov_price_extension: 'per kg',
+				userId
+			},
+			{
 				name: 'Green Papaya',
 				quantity: 300,
 				quantity_extension: 'kg',
@@ -114,7 +128,7 @@ export const CategoryWithProductData = (userId: string) => [
 				description:
 					'Locally Sourced.Deliciously sweet with musky undertones and a soft, butter-like consistency, it is no wonder the papaya was reputably called the "fruit of the angels" by Christopher Columbus. Once considered quite exotic, they can now be found in markets throughout the year. Although there is a slight seasonal peak in early summer and fall, papaya trees produce fruit year round.',
 				gov_price: 35,
-				gov_price_extension: '35',
+				gov_price_extension: '1 kg',
 				userId
 			},
 			{
