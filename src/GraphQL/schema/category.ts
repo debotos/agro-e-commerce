@@ -15,14 +15,17 @@ export default gql`
 	type Category {
 		id: ID!
 		name: String!
+		image: String!
 		products: [Product!]
 	}
 
 	input categoryAddInput {
 		name: String!
+		image: Upload!
 	}
 
 	input categoryUpdateInput {
-		name: String!
+		name: String
+		image: Upload
 	}
 `

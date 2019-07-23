@@ -8,9 +8,17 @@ const category = (sequelize: any, DataTypes: any) => {
 		},
 		name: {
 			type: DataTypes.STRING,
+			allowNull: false,
 			validate: {
-				len: { args: [3, 50], msg: 'Address length min: 3 and max: 50' },
+				len: { args: [3, 50], msg: 'Category length min: 3 and max: 50' },
 				notEmpty: { args: true, msg: 'A category has to have a name.' }
+			}
+		},
+		image: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: {
+				notEmpty: { args: true, msg: 'A category has to have a image.' }
 			}
 		}
 	})
