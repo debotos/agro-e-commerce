@@ -17,9 +17,14 @@ export default gql`
 		addProduct(data: productInput): Product!
 		addProductImage(id: ID!, image: Upload!): ProductImage! # id refers to Product ID
 		addProductImages(id: ID!, images: [Upload!]): [ProductImage!] # id refers to Product ID
-		deleteProduct(id: ID!): Boolean!
+		deleteProduct(id: ID!): DeleteProduct!
 		deleteProductImage(id: ID!, image_public_id: ID!): Boolean! # id refers to Product ID
 		updateProduct(id: ID!): Product!
+	}
+
+	type DeleteProduct {
+		success: Boolean!
+		id: ID!
 	}
 
 	type ProductConnection {

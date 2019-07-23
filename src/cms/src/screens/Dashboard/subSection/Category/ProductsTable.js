@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import gql from 'graphql-tag'
-import { Query, Mutation } from 'react-apollo'
+import { Mutation } from 'react-apollo'
 import Avatar from '@atlaskit/avatar'
 import { Input, Button, Table, Icon, Popconfirm } from 'antd'
 import Highlighter from 'react-highlight-words'
@@ -14,90 +14,63 @@ import InlineLoader from '../../../../assets/loader/inline-loader.gif'
 import { notifyGraphQLError, notifySuccess, notifyError } from '../../../../utils/notify'
 import Loading from '../../../../components/Loading'
 import { GET_OVERVIEW } from '../overview'
+import { GET_CATEGORY } from './ViewCategory'
 
-export const GET_CATEGORIES = gql`
-	query {
-		categories {
-			id
-			name
-			image
-		}
-	}
-`
-
-const DELETE_CATEGORY = gql`
+const DELETE_PRODUCT = gql`
 	mutation($id: ID!) {
-		deleteCategory(id: $id) {
+		deleteProduct(id: $id) {
 			id
 			success
 		}
 	}
 `
 
-class CategoriesTable extends Component {
+class ProductsTable extends Component {
 	render() {
+		const { categoryId, products } = this.props
 		return (
-			<Query
-				query={GET_CATEGORIES}
-				pollInterval={1000 * 60 * 5}
-				notifyOnNetworkStatusChange
-				skip={window.location.hash !== '#/categories'}
+			<Mutation
+				mutation={DELETE_PRODUCT}
+				/* To update the overview */
+				refetchQueries={() => [{ query: GET_OVERVIEW }]}
 				onError={error => {
 					const notice = notifyGraphQLError(error)
 					if (notice && notice.logoutAction) {
 						setTimeout(() => this.props.setUser(null), 3500)
 					}
 				}}
-			>
-				{({ loading, error, data }) => {
-					if (error) return null
-					if (loading) return <Loading size="large" />
-					if (data && data.categories) {
-						const categories = data.categories.map((x, i) => ({ ...x, key: x.id, serial: i + 1 }))
-						return (
-							<Mutation
-								mutation={DELETE_CATEGORY}
-								/* To update the overview */
-								refetchQueries={() => [{ query: GET_OVERVIEW }]}
-								onError={error => {
-									const notice = notifyGraphQLError(error)
-									if (notice && notice.logoutAction) {
-										setTimeout(() => this.props.setUser(null), 3500)
-									}
-								}}
-								update={(cache, { data: { deleteCategory } }) => {
-									const { categories } = cache.readQuery({
-										query: GET_CATEGORIES
-									})
+				update={(cache, { data: { deleteProduct } }) => {
+					const { category } = cache.readQuery({
+						query: GET_CATEGORY,
+						variables: { id: categoryId }
+					})
 
-									if (deleteCategory.success) {
-										cache.writeQuery({
-											query: GET_CATEGORIES,
-											data: { categories: categories.filter(x => x.id !== deleteCategory.id) }
-										})
-										notifySuccess('Category and associated products deleted!')
-									} else {
-										notifyError('Failed to delete the category.')
-									}
-								}}
-							>
-								{(deleteCategory, { loading, data }) => (
-									<TableView
-										data={categories}
-										deleteCategory={deleteCategory}
-										deleteCategoryLoading={loading}
-									/>
-								)}
-							</Mutation>
-						)
+					if (deleteProduct.success) {
+						cache.writeQuery({
+							query: GET_CATEGORY,
+							variables: { id: categoryId },
+							data: {
+								category: {
+									...category,
+									products: category.products.filter(x => x.id !== deleteProduct.id)
+								}
+							}
+						})
+						notifySuccess('Product deleted successfully!')
+					} else {
+						notifyError('Failed to delete the product.')
 					}
 				}}
-			</Query>
+			>
+				{(deleteProduct, { loading, data }) => (
+					<TableView data={products} deleteProduct={deleteProduct} deleteProductLoading={loading} />
+				)}
+			</Mutation>
 		)
 	}
 }
 
-export default CategoriesTable
+export default ProductsTable
 
 const Header = styled.p`
 	font-size: 15px;
@@ -148,31 +121,75 @@ class TableView extends React.Component {
 				sorter: (a, b) => a.serial - b.serial
 			},
 			{
-				title: 'Image',
+				title: 'Images' /* Todo */,
 				dataIndex: 'image',
 				width: '10%'
 			},
 			{
-				title: 'Name',
-				dataIndex: 'name',
-				...this.getColumnSearchProps('name')
+				title: 'Quantity',
+				dataIndex: 'quantity',
+				...this.getColumnSearchProps('quantity')
+			},
+			{
+				title: 'Q.Ext.',
+				dataIndex: 'quantity_extension',
+				...this.getColumnSearchProps('quantity_extension')
+			},
+			{
+				title: 'Price',
+				dataIndex: 'price',
+				sorter: (a, b) => a.price - b.price
+			},
+			{
+				title: 'P.Ext.',
+				dataIndex: 'price_extension',
+				...this.getColumnSearchProps('price_extension')
+			},
+			{
+				title: 'Retailable',
+				dataIndex: 'retailable',
+				width: '5%',
+				filters: [{ text: 'Yes', value: true }, { text: 'No', value: false }],
+				onFilter: (value, record) => record.retailable.includes(value)
+			},
+			{
+				title: 'Available',
+				dataIndex: 'available_now',
+				width: '5%',
+				filters: [{ text: 'Yes', value: true }, { text: 'No', value: false }],
+				onFilter: (value, record) => record.available_now.includes(value)
+			},
+			{
+				title: 'Gov.Price',
+				dataIndex: 'gov_price',
+				sorter: (a, b) => a.gov_price - b.gov_price
+			},
+			{
+				title: 'Gov.P.Ext.',
+				dataIndex: 'gov_price_extension',
+				...this.getColumnSearchProps('gov_price_extension')
+			},
+			{
+				title: 'Owner',
+				dataIndex: 'user',
+				...this.getColumnSearchProps('user')
 			},
 			{
 				title: 'Action',
 				dataIndex: 'operation',
 				render: (text, record) => {
-					return this.props.deleteCategoryLoading ? (
+					return this.props.deleteProductLoading ? (
 						<img alt="Category deleting..." src={InlineLoader} style={{ marginLeft: 12 }} />
 					) : (
 						<span>
-							<Link style={{ marginLeft: 8, color: '#0D4EA6' }} to={`/category/${record.key}`}>
+							<Link style={{ marginLeft: 8, color: '#0D4EA6' }} to={`/product/${record.key}`}>
 								View
 							</Link>
 
 							<Popconfirm
 								title={`Sure to delete? This may contain products!`}
 								icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-								onConfirm={() => this.props.deleteCategory({ variables: { id: record.key } })}
+								onConfirm={() => this.props.deleteProduct({ variables: { id: record.key } })}
 							>
 								{/* eslint-disable-next-line */}
 								<a href="javascript:;" style={{ marginLeft: 8, color: '#e26a6a' }}>
@@ -272,8 +289,8 @@ class TableView extends React.Component {
 				rowClassName="category-table-row"
 				title={() => (
 					<Header>
-						Total <span>{this.props.data.length}</span> Categor
-						{this.props.data.length > 1 ? 'ies' : 'y'}
+						Total <span>{this.props.data.length}</span> job
+						{this.props.data.length > 1 ? 's' : ''}
 					</Header>
 				)}
 				pagination={{
@@ -281,7 +298,7 @@ class TableView extends React.Component {
 					position: 'both',
 					showSizeChanger: true,
 					showQuickJumper: true,
-					pageSizeOptions: ['10', '15', '20', '30']
+					pageSizeOptions: ['10', '15', '20', '30', '45', '60', '100']
 				}}
 			/>
 		)

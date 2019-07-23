@@ -43,7 +43,12 @@ export default {
 			if (!category) throw new UserInputError('No category found with the given id.')
 			/* Delete all product images under this category */
 			await deleteCategoryAsset(category, models)
-			return await models.Category.destroy({ where: { id } }) /* All product also will be deleted */
+			return {
+				success: await models.Category.destroy({
+					where: { id }
+				}) /* All product also will be deleted */,
+				id
+			}
 		}),
 
 		updateCategory: combineResolvers(

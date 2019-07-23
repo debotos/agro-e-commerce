@@ -7,5 +7,6 @@ export default gql`
 	type OverviewData {
 		totalProducts: Int!
 		totalUsers: Int!
+		totalCategory: Int!
 	}
 `

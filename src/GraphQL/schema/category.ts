@@ -8,8 +8,13 @@ export default gql`
 
 	extend type Mutation {
 		addCategory(data: categoryAddInput): Category!
-		deleteCategory(id: ID!): Boolean!
+		deleteCategory(id: ID!): DeleteCategory!
 		updateCategory(id: ID!, data: categoryUpdateInput): Category!
+	}
+
+	type DeleteCategory {
+		success: Boolean!
+		id: ID!
 	}
 
 	type Category {

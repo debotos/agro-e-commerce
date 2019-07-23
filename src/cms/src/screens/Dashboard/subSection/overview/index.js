@@ -29,6 +29,7 @@ export const GET_OVERVIEW = gql`
 		overview {
 			totalUsers
 			totalProducts
+			totalCategory
 		}
 	}
 `
@@ -45,30 +46,31 @@ class DashboardsRouteBase extends Component {
 				<AuthConsumer>
 					{({ setUser }) => (
 						<>
-							<Grid>
-								<Query
-									query={GET_OVERVIEW}
-									pollInterval={10000}
-									notifyOnNetworkStatusChange
-									skip={window.location.hash !== '#/'}
-									onError={error => {
-										const notice = notifyGraphQLError(error)
-										if (notice && notice.logoutAction) {
-											setTimeout(() => setUser(null), 3500)
+							<Query
+								query={GET_OVERVIEW}
+								pollInterval={10000}
+								notifyOnNetworkStatusChange
+								skip={window.location.hash !== '#/'}
+								onError={error => {
+									const notice = notifyGraphQLError(error)
+									if (notice && notice.logoutAction) {
+										setTimeout(() => setUser(null), 3500)
+									}
+								}}
+							>
+								{({ loading, error, data }) => {
+									if (error) return null
+									if (data) {
+										// console.log(data)
+										let totalUsers, totalProducts, totalCategory
+										if (!loading && data.overview) {
+											totalUsers = data.overview.totalUsers
+											totalProducts = data.overview.totalProducts
+											totalCategory = data.overview.totalCategory
 										}
-									}}
-								>
-									{({ loading, error, data }) => {
-										if (error) return null
-										if (data) {
-											// console.log(data)
-											let totalUsers, totalProducts
-											if (!loading && data.overview) {
-												totalUsers = data.overview.totalUsers
-												totalProducts = data.overview.totalProducts
-											}
-											return (
-												<>
+										return (
+											<>
+												<Grid>
 													<GridColumn medium={6}>
 														<Card>
 															<Title>Total Products</Title>
@@ -89,20 +91,29 @@ class DashboardsRouteBase extends Component {
 															</Center>
 														</Card>
 													</GridColumn>
-												</>
-											)
-										}
-									}}
-								</Query>
-							</Grid>
-							{/* <Grid>
-								<GridColumn medium={6}>
-									<Card>Something</Card>
-								</GridColumn>
-								<GridColumn medium={6}>
-									<Card>Something</Card>
-								</GridColumn>
-							</Grid> */}
+												</Grid>
+												<br />
+												<Grid>
+													<GridColumn medium={6}>
+														<Card>
+															<Title>Total Category</Title>
+															<Divider />
+															<Center fullHeight={true}>
+																<Count>
+																	{totalCategory && numeral(totalCategory).format('0,0')}
+																</Count>
+															</Center>
+														</Card>
+													</GridColumn>
+													{/* <GridColumn medium={6}>
+														<Card>Something</Card>
+													</GridColumn> */}
+												</Grid>
+											</>
+										)
+									}
+								}}
+							</Query>
 						</>
 					)}
 				</AuthConsumer>

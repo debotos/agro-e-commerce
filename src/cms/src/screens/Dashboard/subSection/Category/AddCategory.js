@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { Card } from 'antd'
 import gql from 'graphql-tag'
-import { Query, Mutation } from 'react-apollo'
+import { Mutation } from 'react-apollo'
 import { Upload, Icon, Modal, Input } from 'antd'
 import Button from '@atlaskit/button'
 
 import { notifyGraphQLError, notifySuccess } from '../../../../utils/notify'
 import { GET_CATEGORIES } from './CategoriesTable'
+import { getBase64 } from '../../../../utils/helperFunctions'
 
 const ADD_CATEGORY = gql`
 	mutation($data: categoryAddInput) {
@@ -55,7 +56,7 @@ class AddCategory extends Component {
 				mutation={ADD_CATEGORY}
 				update={(cache, { data: { addCategory } }) => {
 					const { categories } = cache.readQuery({ query: GET_CATEGORIES })
-					console.log(addCategory)
+					// console.log(addCategory)
 					cache.writeQuery({
 						query: GET_CATEGORIES,
 						data: { categories: [addCategory, ...categories] }
@@ -105,7 +106,7 @@ class AddCategory extends Component {
 									})
 								}
 							>
-								Update
+								Add Category
 							</Button>
 							<Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
 								<img alt="example" style={{ width: '100%' }} src={previewImage} />
@@ -119,12 +120,3 @@ class AddCategory extends Component {
 }
 
 export default AddCategory
-
-function getBase64(file) {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader()
-		reader.readAsDataURL(file)
-		reader.onload = () => resolve(reader.result)
-		reader.onerror = error => reject(error)
-	})
-}

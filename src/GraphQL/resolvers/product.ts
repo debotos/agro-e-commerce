@@ -123,7 +123,10 @@ export default {
 					const public_ids = product.images.map((x: any) => x.public_id)
 					await deleteImages(public_ids)
 				}
-				return await models.Product.destroy({ where: { id } })
+				return {
+					success: await models.Product.destroy({ where: { id } }),
+					id
+				}
 			}
 		),
 
