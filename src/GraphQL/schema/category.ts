@@ -26,7 +26,7 @@ export default gql`
 
 	input categoryAddInput {
 		name: String!
-		image: Upload!
+		image: Upload # Make it required when deploying for production #FINAL_WORK
 	}
 
 	input categoryUpdateInput {

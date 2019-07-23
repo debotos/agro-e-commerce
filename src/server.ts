@@ -10,7 +10,7 @@ import { addDummyData } from './GraphQL/utils/createDummyData'
 const PORT: number = app.get('port')
 const HOST: string = process.env.HOST_URL || 'http://localhost'
 /* Change it to false in time of production or to make the data stable */
-const eraseDatabaseOnSync: boolean = false
+const eraseDatabaseOnSync: boolean = true
 
 /* seed the database on every application startup if true */
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {

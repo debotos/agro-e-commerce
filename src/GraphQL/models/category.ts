@@ -17,6 +17,9 @@ const category = (sequelize: any, DataTypes: any) => {
 		image: {
 			type: DataTypes.STRING,
 			allowNull: false,
+			/* Remove this default value at this time of production. #FINAL_WORK */
+			defaultValue:
+				'https://res.cloudinary.com/debotos/image/upload/v1563918188/agro-e-commerce/Assets/Category/08f79ad0-8a41-4824-8b49-4d55b820d0f2.jpg',
 			validate: {
 				notEmpty: { args: true, msg: 'A category has to have a image.' }
 			}
