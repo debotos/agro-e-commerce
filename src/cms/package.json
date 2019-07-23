@@ -1,0 +1,66 @@
+{
+	"name": "agro-e-commerce-cms",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@atlaskit/button": "^13.0.13",
+		"@atlaskit/drawer": "^4.2.2",
+		"@atlaskit/dropdown-menu": "^8.0.8",
+		"@atlaskit/flag": "^12.0.11",
+		"@atlaskit/form": "^6.1.4",
+		"@atlaskit/global-navigation": "^7.3.2",
+		"@atlaskit/logo": "^12.1.0",
+		"@atlaskit/media-card": "^63.3.8",
+		"@atlaskit/modal-dialog": "^10.1.0",
+		"@atlaskit/navigation-next": "^6.3.3",
+		"@atlaskit/page": "^11.0.5",
+		"@atlaskit/radio": "^3.0.11",
+		"@atlaskit/textfield": "^2.0.3",
+		"antd": "^3.20.5",
+		"apollo-cache-inmemory": "^1.6.2",
+		"apollo-client": "^2.6.3",
+		"apollo-link": "^1.2.12",
+		"apollo-link-context": "^1.0.18",
+		"apollo-link-error": "^1.1.11",
+		"apollo-link-http": "^1.5.15",
+		"apollo-link-state": "^0.4.2",
+		"apollo-upload-client": "^11.0.0",
+		"jwt-decode": "^2.2.0",
+		"moment": "^2.24.0",
+		"numeral": "^2.0.6",
+		"react": "^16.8.6",
+		"react-apollo": "^2.5.8",
+		"react-beautiful-dnd": "^11.0.4",
+		"react-dom": "^16.8.6",
+		"react-highlight-words": "^0.16.0",
+		"react-intl": "^2.9.0",
+		"react-router-dom": "^5.0.1",
+		"react-scripts": "3.0.1",
+		"styled-components": "^5.0.0-beta.8"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"proxy": "http://localhost:5001",
+	"devDependencies": {
+		"@types/moment": "^2.13.0"
+	}
+}

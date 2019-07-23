@@ -23,6 +23,6 @@
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true
 	},
-	"exclude": ["node_modules"],
+	"exclude": ["node_modules", "./src/cms"],
 	"include": ["./src/**/*.tsx", "./src/**/*.ts"]
 }

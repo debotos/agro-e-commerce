@@ -1,4 +1,6 @@
 import express = require('express')
+import { Response } from 'express'
+import path from 'path'
 import * as bodyParser from 'body-parser'
 import http from 'http'
 import cors from 'cors'
@@ -117,5 +119,33 @@ export const httpServer = http.createServer(app) /* For Apollo Server Subscripti
 /* Putting RESTful Express Server in it. So that it can work together */
 graphqlServer.applyMiddleware({ app }) /* Default open in PORT 5000 */
 graphqlServer.installSubscriptionHandlers(httpServer)
+
+// Server static assets of Admin CMS UI (if in production)
+// Put it at the bottom so that it don't interrupt the '/graphql' endpoint
+if (process.env.NODE_ENV === 'production') {
+	// Set static folder
+	console.log(path.resolve(__dirname, '../', 'src', 'cms', 'build', 'index.html'))
+	/*
+		In heroku the app is starting from 'app/build/server.js'
+		=> Here 'app' dir provided by heroku
+		=> And 'build' dir is where the server outputting the typescript files 
+			into javascript according to the script in package.json
+		=> Now we need to get back to the src/cms/build dir for Static CMS UI
+		=> app
+				|-build
+				|		-(All the compiled js)
+				|		-server.js
+				|-src
+				|		-cms
+				|			-build (Here all the CMS UI)
+				|		-others
+				|-others
+	*/
+	app.use(express.static(path.join(__dirname, '../src/cms/build')))
+	app.get('*', (_, res: Response) => {
+		console.log('Serving Admin CMS UI...')
+		return res.sendFile(path.resolve(__dirname, '../', 'src', 'cms', 'build', 'index.html'))
+	})
+}
 
 export default app

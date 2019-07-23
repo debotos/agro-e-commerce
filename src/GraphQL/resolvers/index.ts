@@ -1,5 +1,6 @@
 import { GraphQLDateTime } from 'graphql-iso-date'
 
+import overviewResolvers from './overview'
 import userResolvers from './user'
 import messageResolvers from './message'
 import categoryResolvers from './category'
@@ -14,5 +15,6 @@ export default [
 	userResolvers,
 	messageResolvers,
 	categoryResolvers,
-	productResolvers
+	productResolvers,
+	overviewResolvers
 ]

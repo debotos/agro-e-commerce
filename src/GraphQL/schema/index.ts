@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server-express'
 
+import overviewSchema from './overview'
 import userSchema from './user'
 import messageSchema from './message'
 import categorySchema from './category'
@@ -21,4 +22,11 @@ const linkSchema = gql`
 	}
 `
 
-export default [linkSchema, userSchema, categorySchema, productSchema, messageSchema]
+export default [
+	linkSchema,
+	userSchema,
+	categorySchema,
+	productSchema,
+	messageSchema,
+	overviewSchema
+]

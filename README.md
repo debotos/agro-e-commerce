@@ -16,6 +16,7 @@ NODE_ENV=development
 POSTGRES_DATABASE_URL=
 # Optional, Just for local development
 PORT=5000
+HOST_URL=http://localhost
 
 # Set it to true to create a role: 'ADMIN' account else leave blank
 # Use it after hosting the app to create the first Admin account

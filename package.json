@@ -6,16 +6,20 @@
 	"author": "Debotos Das <debotosdas@gmail.com>",
 	"license": "LGPL-3.0-or-later",
 	"scripts": {
-		"dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
-		"prod": "tsc && node ./build/server.js",
-		"build": "tsc",
+		"cms": "yarn --cwd src/cms start",
+		"server": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
+		"dev": "concurrently \"yarn run server\" \"yarn run cms\"",
+		"build-server": "tsc",
+		"build-cms": "yarn --cwd src/cms install && yarn --cwd src/cms build",
+		"build": "yarn run build-server && yarn run build-cms",
 		"start": "node ./build/server.js",
-		"postinstall": "npm run build"
+		"postinstall": "yarn run build"
 	},
 	"engines": {
 		"node": ">=8.0.0 <11.0.0"
 	},
 	"dependencies": {
+		"@types/google-libphonenumber": "^7.4.17",
 		"apollo-server": "^2.6.7",
 		"apollo-server-express": "^2.6.7",
 		"app-root-path": "^2.2.1",
@@ -23,11 +27,13 @@
 		"body-parser": "^1.19.0",
 		"cloudinary": "^1.14.0",
 		"compression": "^1.7.4",
+		"concurrently": "^4.1.1",
 		"cors": "^2.8.5",
 		"dataloader": "^1.4.0",
 		"dotenv": "^8.0.0",
 		"express": "^4.17.1",
 		"express-async-errors": "^3.1.1",
+		"google-libphonenumber": "^3.2.3",
 		"graphql": "^14.4.2",
 		"graphql-iso-date": "^3.6.1",
 		"graphql-resolvers": "^0.3.3",

@@ -1,6 +1,6 @@
 import * as Data from './dummyStore'
 
-const createUsersWithMessages = async (models: any) => {
+const addDummyData = async (models: any) => {
 	/* 1. User & Message */
 	let userId
 	for (let entry of Data.UserWithMessageData) {
@@ -24,4 +24,4 @@ const createUsersWithMessages = async (models: any) => {
 	}
 }
 
-export { createUsersWithMessages }
+export { addDummyData }

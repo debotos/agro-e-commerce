@@ -48,7 +48,7 @@ const user = (sequelize: any, DataTypes: any) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 			validate: {
-				len: { args: [6, 42], msg: 'Passwords must be at least 6 characters long.' },
+				len: { args: [8], msg: 'Password must be at least 8 characters long.' },
 				notEmpty: { args: true, msg: 'Password is required.' }
 			}
 		},
@@ -115,6 +115,15 @@ const user = (sequelize: any, DataTypes: any) => {
 
 	User.beforeCreate(async (user: any) => {
 		user.password = await user.generatePasswordHash()
+	})
+	/*
+		beforeUpdate hook called when use instance.save() or instance.update(), 
+		when use model.update(), beforeBulkUpdate will be called.
+	*/
+	User.beforeUpdate(async (user: any) => {
+		if (user.changed('password')) {
+			user.password = await user.generatePasswordHash()
+		}
 	})
 
 	User.prototype.generatePasswordHash = async function() {

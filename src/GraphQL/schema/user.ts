@@ -11,6 +11,9 @@ export default gql`
 		signUp(data: signUpInput): Token!
 		signIn(login: String!, password: String!): Token!
 		changeProfileImage(image: Upload!): Image!
+		updateProfile(data: updateProfileInput): User!
+		changeUserRole(id: ID!, role: Role!): User!
+		changePassword(currentPassword: String!, newPassword: String!): Token!
 		deleteUser(id: ID!): Boolean!
 		deleteMe: Boolean!
 	}
@@ -32,6 +35,7 @@ export default gql`
 		address: String!
 		messages: [Message!]
 		products: [Product!]
+		createdAt: Date!
 	}
 
 	type Image {
@@ -60,6 +64,14 @@ export default gql`
 		division: String!
 		region: String!
 		address: String!
+	}
+
+	input updateProfileInput {
+		full_name: String
+		phone: String
+		division: String
+		region: String
+		address: String
 	}
 
 	enum Role {

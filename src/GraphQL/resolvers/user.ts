@@ -1,12 +1,14 @@
 import jwt from 'jsonwebtoken'
 import { combineResolvers } from 'graphql-resolvers'
 import { AuthenticationError, UserInputError } from 'apollo-server'
+const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 
 import { isAdmin, isAuthenticated } from './middleware/authorization'
 import { uploadOneImage, deleteImages } from '../utils/cloudinary'
 import logger from '../../common/logger'
 
 const expiresTime: string = process.env.JWT_TIMEOUT || '60m'
+const MIN_PASSWORD_LENGTH: number = 8
 
 const createToken = async (user: any, secret: string, expiresIn: string) => {
 	const { id, user_name, full_name, email, phone, role, image, division, region, address } = user
@@ -60,6 +62,24 @@ export default {
 				address: string
 			}
 			const { user_name, full_name, email, phone, password, division, region, address, role } = data
+			/* Simple Validation */
+			/* This is also handled by DB Model. But to make the calculation shorter it's here */
+			if (password.toString().length < MIN_PASSWORD_LENGTH) {
+				throw new UserInputError(
+					`Passwords must be at least ${MIN_PASSWORD_LENGTH} characters long.`
+				)
+			}
+
+			if (!phone) throw new UserInputError(`Invalid phone number.`)
+			/* To catch NAN value error */
+			try {
+				if (!phoneUtil.isValidNumber(phoneUtil.parse(phone))) {
+					throw new UserInputError(`Invalid phone number.`)
+				}
+			} catch (error) {
+				logger.error(error.message)
+				throw new UserInputError(error.message)
+			}
 			let newUser: signUpData = {
 				user_name,
 				full_name,
@@ -158,7 +178,82 @@ export default {
 			return await models.User.destroy({
 				where: { id }
 			})
-		})
+		}),
+
+		updateProfile: combineResolvers(
+			isAuthenticated,
+			async (_: any, { data }: any, { me, models }: any) => {
+				if (Object.keys(data).length === 0) {
+					throw new UserInputError('Provide the data to update.')
+				}
+				/* If the user wants to update his phone number then first validate it */
+				if (data.phone) {
+					/* To catch NAN value error */
+					try {
+						if (!phoneUtil.isValidNumber(phoneUtil.parse(data.phone))) {
+							throw new UserInputError(`Invalid phone number.`)
+						}
+					} catch (error) {
+						logger.error(error.message)
+						throw new UserInputError(error.message)
+					}
+				}
+				const { id } = me
+				const user = await models.User.findByPk(id)
+				if (!user) {
+					logger.error(`User with ${id} doesn't exist in DB.`)
+					throw new UserInputError(`Your account has been deleted.`)
+				}
+				const [rowsUpdate, [updatedUser]] = await models.User.update(
+					{ ...data },
+					{ returning: true, where: { id: me.id } }
+				)
+				logger.info(`${rowsUpdate} Profile data updata associated with id: ${id}`)
+
+				return updatedUser
+			}
+		),
+
+		changeUserRole: combineResolvers(
+			isAdmin,
+			async (_: any, { id, role }: any, { models }: any) => {
+				if (!id) throw new UserInputError('Invalid user id.')
+				const user = await models.User.findByPk(id)
+				if (!user) throw new UserInputError('No user found with this id.')
+				const [rowsUpdate, [updatedUser]] = await models.User.update(
+					{ role },
+					{ returning: true, where: { id } }
+				)
+				logger.info(
+					`${rowsUpdate} User with username '${user.user_name}' -> role updated from '${
+						user.role
+					}' to '${role}' `
+				)
+				return updatedUser
+			}
+		),
+
+		changePassword: combineResolvers(
+			isAuthenticated,
+			async (_: any, { currentPassword, newPassword }: any, { me, models, jwtSecret }: any) => {
+				if (!currentPassword || !newPassword) throw new UserInputError('Invalid data provided.')
+				/* This is also handled by DB Model. But to make the calculation shorter it's here */
+				if (newPassword.toString().length < MIN_PASSWORD_LENGTH) {
+					throw new UserInputError(
+						`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`
+					)
+				}
+				const { id } = me
+				const user = await models.User.findByPk(id)
+				if (!user) throw new AuthenticationError('Your account has been deleted.')
+				const isValid = await user.validatePassword(currentPassword)
+				if (!isValid) {
+					throw new UserInputError('Invalid current password.')
+				}
+				await user.update({ password: newPassword })
+				return { token: createToken(user, jwtSecret, expiresTime) }
+			}
+		)
 	},
 
 	User: {
