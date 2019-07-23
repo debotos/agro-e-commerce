@@ -17,6 +17,7 @@ sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
 	if (eraseDatabaseOnSync) {
 		addDummyData(models) /* Generate dummey or initial data */
 	}
+
 	httpServer.listen(PORT, () => {
 		console.log(` 🚀  RESTful Server is up on ${HOST}:${PORT}`)
 		console.log(` 🚀  GraphQL Server is on on ${HOST}:${PORT}/graphql`)

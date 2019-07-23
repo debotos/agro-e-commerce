@@ -4,7 +4,6 @@ import { Mutation } from 'react-apollo'
 import Avatar from '@atlaskit/avatar'
 import { Input, Button, Table, Icon, Popconfirm } from 'antd'
 import Highlighter from 'react-highlight-words'
-import numeral from 'numeral'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -12,7 +11,6 @@ import styled from 'styled-components'
 import cropCloudinayImage from '../../../../utils/cropImage'
 import InlineLoader from '../../../../assets/loader/inline-loader.gif'
 import { notifyGraphQLError, notifySuccess, notifyError } from '../../../../utils/notify'
-import Loading from '../../../../components/Loading'
 import { GET_OVERVIEW } from '../overview'
 import { GET_CATEGORY } from './ViewCategory'
 
@@ -81,20 +79,31 @@ const Header = styled.p`
 class Cell extends React.Component {
 	renderDataView = (children, record, field) => {
 		switch (field) {
-			case 'image':
-				return record[field] ? (
-					<Avatar
-						name={record['name']}
-						size="medium"
-						src={cropCloudinayImage(record[field], 80, 80)}
-					/>
+			case 'images':
+				return record[field] && record[field].length > 0 ? (
+					<div style={{ display: 'flex', flexWrap: 'wrap' }}>
+						{record[field].map((x, i) => (
+							<Avatar
+								key={i + '_product_image'}
+								name={record['name']}
+								size="small"
+								src={cropCloudinayImage(x.secure_url, 40, 40)}
+								target="_blank"
+								href={x.secure_url}
+							/>
+						))}
+					</div>
 				) : (
-					<Avatar borderColor="transparent" isActive={false} isHover={false} size="small" />
+					''
 				)
 			case 'createdAt':
 				return `${moment(record[field]).format('ddd, MMM Do YY')} `
-			case 'countAddedJobs':
-				return `${numeral(record[field]).format('0,0')}`
+			case 'user':
+				return (
+					<Link style={{ marginLeft: 8, color: '#0D4EA6' }} to={`/user/${record[field].id}`}>
+						{record[field].user_name}
+					</Link>
+				)
 			default:
 				return children
 		}
@@ -121,8 +130,8 @@ class TableView extends React.Component {
 				sorter: (a, b) => a.serial - b.serial
 			},
 			{
-				title: 'Images' /* Todo */,
-				dataIndex: 'image',
+				title: 'Images',
+				dataIndex: 'images',
 				width: '10%'
 			},
 			{
@@ -149,14 +158,14 @@ class TableView extends React.Component {
 				title: 'Retailable',
 				dataIndex: 'retailable',
 				width: '5%',
-				filters: [{ text: 'Yes', value: true }, { text: 'No', value: false }],
+				filters: [{ text: 'Yes', value: 'Yes' }, { text: 'No', value: 'No' }],
 				onFilter: (value, record) => record.retailable.includes(value)
 			},
 			{
 				title: 'Available',
 				dataIndex: 'available_now',
 				width: '5%',
-				filters: [{ text: 'Yes', value: true }, { text: 'No', value: false }],
+				filters: [{ text: 'Yes', value: 'Yes' }, { text: 'No', value: 'No' }],
 				onFilter: (value, record) => record.available_now.includes(value)
 			},
 			{
@@ -187,7 +196,7 @@ class TableView extends React.Component {
 							</Link>
 
 							<Popconfirm
-								title={`Sure to delete? This may contain products!`}
+								title={`Sure to delete? Action is not reversible!`}
 								icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
 								onConfirm={() => this.props.deleteProduct({ variables: { id: record.key } })}
 							>

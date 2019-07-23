@@ -46,6 +46,7 @@ class ViewCategory extends Component {
 	}
 	render() {
 		const categoryId = this.props.match.params.id
+
 		return (
 			<AuthConsumer>
 				{({ setUser, user }) => (
@@ -62,7 +63,7 @@ class ViewCategory extends Component {
 							}}
 						>
 							{({ loading, error, data }) => {
-								if (error) return null
+								if (error) return <h1>Something is wrong.</h1>
 								if (loading) return <Loading size="large" />
 								if (data && Object.keys(data.category).length > 0) {
 									const { category } = data
@@ -73,7 +74,13 @@ class ViewCategory extends Component {
 										url: category.image
 									}
 
-									const products = category.products.map((x, i) => ({ ...x, key: x.id }))
+									const products = category.products.map((x, i) => ({
+										...x,
+										serial: i + 1,
+										key: x.id,
+										available_now: x.available_now ? 'Yes' : 'No',
+										retailable: x.retailable ? 'Yes' : 'No'
+									}))
 									return (
 										<>
 											<UpdateCategory

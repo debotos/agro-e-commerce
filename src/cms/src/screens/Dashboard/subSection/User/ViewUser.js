@@ -57,7 +57,7 @@ class ViewUser extends Component {
 								}}
 							>
 								{({ loading, error, data }) => {
-									if (error) return null
+									if (error) return <h1>Something is wrong.</h1>
 									if (loading) return <Loading size="large" />
 									if (data) {
 										return (
@@ -67,6 +67,7 @@ class ViewUser extends Component {
 											</>
 										)
 									}
+									return <h1>Nothing to view.</h1>
 								}}
 							</Query>
 						</>

@@ -59,7 +59,7 @@ class DashboardsRouteBase extends Component {
 								}}
 							>
 								{({ loading, error, data }) => {
-									if (error) return null
+									if (error) return <h1>Something is wrong.</h1>
 									if (data) {
 										// console.log(data)
 										let totalUsers, totalProducts, totalCategory
@@ -112,6 +112,7 @@ class DashboardsRouteBase extends Component {
 											</>
 										)
 									}
+									return <h1>Nothing to show.</h1>
 								}}
 							</Query>
 						</>
