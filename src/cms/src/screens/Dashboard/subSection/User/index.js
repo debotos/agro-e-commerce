@@ -101,6 +101,8 @@ class UsersList extends Component {
 												)}
 											</Mutation>
 										)
+									} else {
+										return null
 									}
 								}}
 							</Query>

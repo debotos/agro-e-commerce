@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { ApolloProvider } from 'react-apollo'
 import jwt_decode from 'jwt-decode'
+import { AtlaskitThemeProvider } from '@atlaskit/theme'
 
 import { AuthProvider } from './context/authContext'
 import isEmpty from './utils/isEmpty'
@@ -41,7 +42,9 @@ class App extends Component {
 		return (
 			<AuthProvider value={this.state}>
 				<ApolloProvider client={apolloClient}>
-					<AppRoutes />
+					<AtlaskitThemeProvider mode="light">
+						<AppRoutes />
+					</AtlaskitThemeProvider>
 				</ApolloProvider>
 			</AuthProvider>
 		)

@@ -236,7 +236,7 @@ class TableView extends React.Component {
 				rowClassName="users-table-row"
 				title={() => (
 					<Header>
-						Total <span>{this.props.data.length}</span> User{this.props.data.length > 1 ? 's' : ''}
+						Total <span>{this.props.data.length}</span> User{this.props.data.length > 1 ? 's' : ''}(Excluding You)
 					</Header>
 				)}
 				pagination={{

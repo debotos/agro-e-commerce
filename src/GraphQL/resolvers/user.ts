@@ -216,10 +216,11 @@ export default {
 
 		changeUserRole: combineResolvers(
 			isAdmin,
-			async (_: any, { id, role }: any, { models }: any) => {
+			async (_: any, { id, role }: any, { models, me }: any) => {
 				if (!id) throw new UserInputError('Invalid user id.')
 				const user = await models.User.findByPk(id)
 				if (!user) throw new UserInputError('No user found with this id.')
+				if(id === me.id) throw new UserInputError(`You can't change your own role.`)
 				const [rowsUpdate, [updatedUser]] = await models.User.update(
 					{ role },
 					{ returning: true, where: { id } }

@@ -50,7 +50,7 @@ class CategoriesTable extends Component {
 				}}
 			>
 				{({ loading, error, data }) => {
-					if (error) return null
+					if (error) return <h1>Something went worng!</h1>
 					if (loading) return <Loading size="large" />
 					if (data && data.categories) {
 						const categories = data.categories.map((x, i) => ({ ...x, key: x.id, serial: i + 1 }))
@@ -90,6 +90,8 @@ class CategoriesTable extends Component {
 								)}
 							</Mutation>
 						)
+					} else {
+						return <h1>Nothing to view.</h1>
 					}
 				}}
 			</Query>

@@ -2,6 +2,7 @@ import DashboardIcon from '@atlaskit/icon/glyph/dashboard'
 import SuitcaseIcon from '@atlaskit/icon/glyph/suitcase'
 import PersonCircleIcon from '@atlaskit/icon/glyph/person-circle'
 import PreferencesIcon from '@atlaskit/icon/glyph/preferences'
+import MentionIcon from '@atlaskit/icon/glyph/mention';
 
 import { LinkItem } from './index'
 
@@ -33,6 +34,13 @@ export const secondaryNav = {
 					before: DashboardIcon,
 					text: 'Overview',
 					to: '/'
+				},
+				{
+					type: 'Item',
+					id: 'profile-actions',
+					goTo: 'product/profile',
+					before: MentionIcon,
+					text: 'My Account'
 				},
 				{
 					type: 'Item',

@@ -11,8 +11,9 @@ import GlobalNav from './GlobalNav' // 1'st part at the left most side
 import userRoutes from './subSection/User/userRoutes'
 import categoryRoutes from './subSection/Category/categoryRoutes'
 import settingRoutes from './subSection/Setting/settingRoutes'
-import { secondaryNav } from './SecondaryNav'
+import profileRoutes from './subSection/Profile/profileRoutes'
 
+import { secondaryNav } from './SecondaryNav'
 import OverviewRoute from './subSection/overview'
 import Categories from './subSection/Category'
 import ViewCategory from './subSection/Category/ViewCategory'
@@ -20,6 +21,7 @@ import Users from './subSection/User'
 import AddUser from './subSection/User/AddUser'
 import ViewUser from './subSection/User/ViewUser'
 import Settings from './subSection/Setting'
+import Profile from './subSection/Profile'
 
 class App extends Component {
 	componentDidMount() {
@@ -28,6 +30,7 @@ class App extends Component {
 		navigationViewController.addView(categoryRoutes)
 		navigationViewController.addView(userRoutes)
 		navigationViewController.addView(settingRoutes)
+		navigationViewController.addView(profileRoutes)
 	}
 
 	render() {
@@ -41,6 +44,7 @@ class App extends Component {
 						<Route path="/user/add" component={AddUser} />
 						<Route path="/user/:id" component={ViewUser} />
 						<Route path="/settings" component={Settings} />
+						<Route path="/profile" component={Profile} />
 						<Route path="/" component={OverviewRoute} />
 					</Switch>
 				</div>
