@@ -7,7 +7,7 @@ import Button from '@atlaskit/button'
 import { RadioGroup } from '@atlaskit/radio'
 import moment from 'moment'
 
-import { notifyError, notifySuccess } from '../../../../utils/notify'
+import { notifyError, notifyGraphQLError, notifySuccess } from '../../../../utils/notify'
 import { GET_USER } from './ViewUser'
 import cropCloudinayImage from '../../../../utils/cropImage'
 
@@ -53,6 +53,12 @@ class ViewUserInfo extends Component {
 			<>
 				<Mutation
 					mutation={CHANGE_ROLE}
+					onError={error => {
+						const notice = notifyGraphQLError(error)
+						if (notice && notice.logoutAction) {
+							setTimeout(() => this.props.setUser(null), 3500)
+						}
+					}}
 					update={(cache, { data: { changeUserRole } }) => {
 						const { user } = cache.readQuery({ query: GET_USER, variables: { id } })
 						console.log(changeUserRole)

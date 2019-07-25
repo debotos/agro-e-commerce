@@ -10,11 +10,12 @@ export default {
 	Query: {
 		categories: async (_: any, __: any, { models }: any) => {
 			return await models.Category.findAll({
-				order: [['createdAt', 'DESC']]
+				order: [['createdAt', 'DESC']],
+				raw: true
 			})
 		},
 		category: async (_: any, { id }: any, { models }: any) => {
-			return await models.Category.findByPk(id)
+			return await models.Category.findByPk(id, { raw: true })
 		}
 	},
 
@@ -39,7 +40,7 @@ export default {
 
 		deleteCategory: combineResolvers(isAdmin, async (_: any, { id }: any, { models }: any) => {
 			if (!id) throw new UserInputError('Invalid category id.')
-			const category = await models.Category.findByPk(id)
+			const category = await models.Category.findByPk(id, { raw: true })
 			if (!category) throw new UserInputError('No category found with the given id.')
 			/* Delete all product images under this category */
 			await deleteCategoryAsset(category, models)
@@ -55,7 +56,7 @@ export default {
 			isAdmin,
 			async (_: any, { id, data: { name, image } }: any, { models }: any) => {
 				if (!name && !image) throw new UserInputError('Provide name or image to update.')
-				const category = await models.Category.findByPk(id)
+				const category = await models.Category.findByPk(id, { raw: true })
 				if (!category) throw new UserInputError('No category found with the given id.')
 
 				let updatedImageUrl
@@ -84,7 +85,7 @@ export default {
 					/* At the end, Delete the Previous image */
 					await deleteCategoryImage(category)
 				}
-				return await models.Category.findByPk(id)
+				return await models.Category.findByPk(id, { raw: true })
 			}
 		)
 	},
@@ -95,7 +96,8 @@ export default {
 				order: [['createdAt', 'DESC']],
 				where: {
 					categoryId: category.id
-				}
+				},
+				raw: true
 			})
 		}
 	}
@@ -110,7 +112,7 @@ const deleteCategoryAsset = async (category: any, models: any) => {
 		await deleteImages([getCloudinaryPublicId(image)])
 	}
 	/* Delete product iamges */
-	const products = await models.Product.findAll({ where: { categoryId: id } })
+	const products = await models.Product.findAll({ where: { categoryId: id }, raw: true })
 	if (products) {
 		const public_ids = products
 			.map((x: any) => {

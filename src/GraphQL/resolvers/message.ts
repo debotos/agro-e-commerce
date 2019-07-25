@@ -25,7 +25,8 @@ export default {
 								[Sequelize.Op.lt]: fromCursorHash(cursor)
 							}
 					  }
-					: null
+					: null,
+				raw: true
 			})
 
 			const hasNextPage = messages.length > limit
@@ -49,7 +50,7 @@ export default {
 			}
 		},
 		message: async (_: any, { id }: any, { models }: any) => {
-			return await models.Message.findByPk(id)
+			return await models.Message.findByPk(id, { raw: true })
 		}
 	},
 

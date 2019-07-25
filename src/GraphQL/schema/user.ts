@@ -10,7 +10,7 @@ export default gql`
 	extend type Mutation {
 		signUp(data: signUpInput): Token!
 		signIn(login: String!, password: String!): Token!
-		changeProfileImage(image: Upload!): Image!
+		changeProfileImage(image: Upload!): ChangeProfileImage!
 		updateProfile(data: updateProfileInput): User!
 		changeUserRole(id: ID!, role: Role!): User!
 		changePassword(currentPassword: String!, newPassword: String!): Token!
@@ -19,6 +19,11 @@ export default gql`
 	}
 
 	type Token {
+		token: String!
+	}
+
+	type ChangeProfileImage {
+		image: Image!
 		token: String!
 	}
 

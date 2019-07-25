@@ -36,15 +36,16 @@ export default {
 	Query: {
 		users: async (_: any, __: any, { models }: any) => {
 			return await models.User.findAll({
-				order: [['createdAt', 'DESC']]
+				order: [['createdAt', 'DESC']],
+				raw: true
 			})
 		},
 		user: async (_: any, { id }: any, { models }: any) => {
-			return await models.User.findByPk(id)
+			return await models.User.findByPk(id, { raw: true })
 		},
 		me: async (_: any, __: any, { models, me }: any) => {
 			if (!me) return null
-			return await models.User.findByPk(me.id)
+			return await models.User.findByPk(me.id, { raw: true })
 		}
 	},
 
@@ -129,7 +130,7 @@ export default {
 
 		changeProfileImage: combineResolvers(
 			isAuthenticated,
-			async (_: any, { image }: any, { me, models }: any) => {
+			async (_: any, { image }: any, { me, models, jwtSecret }: any) => {
 				/*
 					const { createReadStream, filename, mimetype, encoding }: any = await image
 					const stream = createReadStream()
@@ -143,7 +144,15 @@ export default {
 				/* 1. Validate file metadata. */
 				/* 2. Stream file contents into cloud storage(Here, cloudinary.com): https://nodejs.org/api/stream.html */
 				/* 3. Save the uploaded file response in your DB. */
-
+				const user = await models.User.findByPk(me.id, { raw: true })
+				if (!user)
+					throw new AuthenticationError('Session expired or your account has been deleted.')
+				// Delete user existing profile image from cloudinary(if have)
+				if (user.image) {
+					const public_ids = [user.image.public_id]
+					await deleteImages(public_ids)
+					logger.info(`Profie image deleted of user ${user.email}`)
+				}
 				const { createReadStream }: any = await image
 				const stream = createReadStream()
 				const path = `${me.role}/${me.user_name}`
@@ -151,8 +160,11 @@ export default {
 				if (!response) {
 					throw new Error('Failed to upload profile image.')
 				}
-				await models.User.update({ image: response }, { where: { id: me.id } })
-				return response
+				const [, [updatedUser]] = await models.User.update(
+					{ image: response },
+					{ returning: true, where: { id: me.id } }
+				)
+				return { token: createToken(updatedUser, jwtSecret, expiresTime), image: response }
 			}
 		),
 
@@ -160,7 +172,7 @@ export default {
 			if (!id) {
 				throw new UserInputError('Invalid user id.')
 			}
-			const user = await models.User.findByPk(id)
+			const user = await models.User.findByPk(id, { raw: true })
 			if (!user) throw new UserInputError('Invalid user id.')
 			await deleteUserAsset(user, models)
 			return await models.User.destroy({
@@ -170,7 +182,7 @@ export default {
 
 		deleteMe: combineResolvers(isAuthenticated, async (_: any, __: any, { me, models }: any) => {
 			const { id } = me
-			const user = await models.User.findByPk(id)
+			const user = await models.User.findByPk(id, { raw: true })
 			if (!user) {
 				logger.error(`User with ${id} doesn't exist in DB.`)
 			}
@@ -199,7 +211,7 @@ export default {
 					}
 				}
 				const { id } = me
-				const user = await models.User.findByPk(id)
+				const user = await models.User.findByPk(id, { raw: true })
 				if (!user) {
 					logger.error(`User with ${id} doesn't exist in DB.`)
 					throw new UserInputError(`Your account has been deleted.`)
@@ -218,9 +230,9 @@ export default {
 			isAdmin,
 			async (_: any, { id, role }: any, { models, me }: any) => {
 				if (!id) throw new UserInputError('Invalid user id.')
-				const user = await models.User.findByPk(id)
+				const user = await models.User.findByPk(id, { raw: true })
 				if (!user) throw new UserInputError('No user found with this id.')
-				if(id === me.id) throw new UserInputError(`You can't change your own role.`)
+				if (id === me.id) throw new UserInputError(`You can't change your own role.`)
 				const [rowsUpdate, [updatedUser]] = await models.User.update(
 					{ role },
 					{ returning: true, where: { id } }
@@ -261,17 +273,15 @@ export default {
 		messages: async (user: any, __: any, { models }: any) => {
 			return await models.Message.findAll({
 				order: [['createdAt', 'DESC']],
-				where: {
-					userId: user.id
-				}
+				where: { userId: user.id },
+				raw: true
 			})
 		},
 		products: async (user: any, __: any, { models }: any) => {
 			return await models.Product.findAll({
 				order: [['createdAt', 'DESC']],
-				where: {
-					userId: user.id
-				}
+				where: { userId: user.id },
+				raw: true
 			})
 		}
 	}
@@ -287,7 +297,7 @@ const deleteUserAsset = async (user: any, models: any) => {
 		logger.info(`Profie image deleted of user ${user.email}`)
 	}
 	// 2. Delete user products image from cloudinary
-	const products = await models.Product.findAll({ where: { userId: user.id } })
+	const products = await models.Product.findAll({ where: { userId: user.id }, raw: true })
 	if (products) {
 		const public_ids = products
 			.map((x: any) => {

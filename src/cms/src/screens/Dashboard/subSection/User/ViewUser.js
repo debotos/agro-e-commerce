@@ -62,7 +62,7 @@ class ViewUser extends Component {
 									if (data) {
 										return (
 											<>
-												<ViewUserInfo user={data.user} />
+												<ViewUserInfo user={data.user} setUser={setUser} />
 												{/* Here, put the user products table with productDelete mutation */}
 											</>
 										)

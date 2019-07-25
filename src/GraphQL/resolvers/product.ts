@@ -73,7 +73,8 @@ export default {
 				] /* First, the list should be ordered by createdAt date, otherwise the cursor won’t help */,
 				offset,
 				limit: limit + 1 /* Added 1 to calculate hasNextPage: Boolean! value */,
-				...options
+				...options,
+				raw: true
 			})
 
 			const hasNextPage = products.length > limit
@@ -97,7 +98,7 @@ export default {
 			}
 		},
 		product: async (_: any, { id }: any, { models }: any) => {
-			return await models.Product.findByPk(id)
+			return await models.Product.findByPk(id, { raw: true })
 		}
 	},
 
@@ -105,7 +106,7 @@ export default {
 		addProduct: combineResolvers(
 			isAuthenticated,
 			async (_: any, { data }: any, { me, models }: any) => {
-				const category = await models.Category.findByPk(data.categoryId)
+				const category = await models.Category.findByPk(data.categoryId, { raw: true })
 				if (!category) throw new UserInputError('Invalid categoryId.')
 				return await models.Product.create({
 					...data,
@@ -118,7 +119,7 @@ export default {
 			isAuthenticated,
 			isProductOwner,
 			async (_: any, { id }: any, { models }: any) => {
-				const product = await models.Product.findByPk(id)
+				const product = await models.Product.findByPk(id, { raw: true })
 				if (product.images) {
 					const public_ids = product.images.map((x: any) => x.public_id)
 					await deleteImages(public_ids)
@@ -187,7 +188,7 @@ export default {
 			isAuthenticated,
 			isProductOwner,
 			async (_: any, { id, image_public_id }: any, { models }: any) => {
-				const product = await models.Product.findByPk(id)
+				const product = await models.Product.findByPk(id, { raw: true })
 				let images = product.images
 				// Check images exist
 				if (!images) throw new UserInputError("Invalid image_public_id. It doesn't exist.")

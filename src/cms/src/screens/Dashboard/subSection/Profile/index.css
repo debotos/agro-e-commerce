@@ -1,0 +1,33 @@
+/* Custom profile image input */
+
+.custom-profile-image-input {
+  color: transparent;
+  border: none;
+  outline: none;
+}
+.custom-profile-image-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-profile-image-input::before {
+  content: 'Change Photo';
+  color: #fff;
+  display: inline-block;
+  background: #0D4EA6;
+  border: 1px solid #0D4EA6;
+  border-radius: 2px;
+  padding: 8px 10px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  font-size: 11pt;
+}
+.custom-profile-image-input:hover::before {
+  border-color: #0D4EA6;
+}
+.custom-profile-image-input:active {
+  outline: 0;
+}
+.custom-profile-image-input:active::before {
+  background: #0D4EA6;
+}

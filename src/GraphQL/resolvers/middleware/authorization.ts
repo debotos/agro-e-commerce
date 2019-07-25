@@ -28,7 +28,7 @@ export const isAdmin = combineResolvers(
 			Because if this fails then an additional DB query will not execute
 		*/
 		if (role === 'ADMIN') {
-			const user = await models.User.findByPk(id)
+			const user = await models.User.findByPk(id, { raw: true })
 			if (user && user.role === 'ADMIN') {
 				return skip
 			} else {
