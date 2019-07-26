@@ -212,6 +212,21 @@ export default {
 				const [updateCount] = await models.Product.update({ images }, { where: { id } })
 				return updateCount /* 1 will be true */
 			}
+		),
+
+		updateProduct: combineResolvers(
+			isAuthenticated,
+			isProductOwner,
+			async (_: any, { id, data }: any, { models }: any) => {
+				const [rowsUpdate, [updatedProduct]] = await models.Product.update(
+					{ ...data },
+					{ returning: true, where: { id } }
+				)
+
+				logger.info(`${rowsUpdate} product updated(ID: ${id})`)
+
+				return updatedProduct
+			}
 		)
 	},
 

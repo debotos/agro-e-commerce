@@ -14,12 +14,12 @@ export default gql`
 	}
 
 	extend type Mutation {
-		addProduct(data: productInput): Product!
+		addProduct(data: productAddInput): Product!
 		addProductImage(id: ID!, image: Upload!): ProductImage! # id refers to Product ID
 		addProductImages(id: ID!, images: [Upload!]): [ProductImage!] # id refers to Product ID
 		deleteProduct(id: ID!): DeleteProduct!
 		deleteProductImage(id: ID!, image_public_id: ID!): Boolean! # id refers to Product ID
-		updateProduct(id: ID!): Product!
+		updateProduct(id: ID!, data: productUpdateInput): Product!
 	}
 
 	type DeleteProduct {
@@ -72,7 +72,23 @@ export default gql`
 		secure_url: String!
 	}
 
-	input productInput {
+	input productAddInput {
+		name: String!
+		quantity: Int!
+		quantity_extension: String!
+		min_quantity: Int!
+		min_quantity_extension: String!
+		price: Float!
+		price_extension: String!
+		available_now: Boolean!
+		retailable: Boolean!
+		description: String!
+		gov_price: Float!
+		gov_price_extension: String!
+		categoryId: ID!
+	}
+
+	input productUpdateInput {
 		name: String!
 		quantity: Int!
 		quantity_extension: String!
