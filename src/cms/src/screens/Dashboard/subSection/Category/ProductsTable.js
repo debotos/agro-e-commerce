@@ -145,6 +145,16 @@ class TableView extends React.Component {
 				...this.getColumnSearchProps('quantity_extension')
 			},
 			{
+				title: 'Min.Q.',
+				dataIndex: 'min_quantity',
+				...this.getColumnSearchProps('min_quantity')
+			},
+			{
+				title: 'Min.Q.Ext.',
+				dataIndex: 'min_quantity_extension',
+				...this.getColumnSearchProps('min_quantity_extension')
+			},
+			{
 				title: 'Price',
 				dataIndex: 'price',
 				sorter: (a, b) => a.price - b.price

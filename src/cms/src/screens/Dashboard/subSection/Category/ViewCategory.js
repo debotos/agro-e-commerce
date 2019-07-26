@@ -21,6 +21,8 @@ export const GET_CATEGORY = gql`
 				name
 				quantity
 				quantity_extension
+				min_quantity
+				min_quantity_extension
 				price
 				price_extension
 				available_now
