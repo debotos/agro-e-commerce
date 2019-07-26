@@ -19,7 +19,7 @@ const product = (sequelize: any, DataTypes: any) => {
 			allowNull: false,
 			validate: {
 				isNumeric: { args: true, msg: 'Only numeric value allowed.' },
-				min: { args: 1, msg: 'Minimum quantity is 1.' },
+				min: { args: 1, msg: 'Minimum value for quantity is 1.' },
 				notEmpty: { args: true, msg: 'Product quantity is required.' }
 			}
 		},
@@ -29,6 +29,23 @@ const product = (sequelize: any, DataTypes: any) => {
 			validate: {
 				len: { args: [1, 50], msg: 'Quantity extension length min: 1 and max: 50' },
 				notEmpty: { args: true, msg: 'Quantity extension is required.' }
+			}
+		},
+		min_quantity: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			validate: {
+				isNumeric: { args: true, msg: 'Only numeric value allowed.' },
+				min: { args: 1, msg: 'Minimum value for Minimum Quantity is 1.' },
+				notEmpty: { args: true, msg: 'Product minimun quantity is required.' }
+			}
+		},
+		min_quantity_extension: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			validate: {
+				len: { args: [1, 50], msg: 'Minimum Quantity extension length min: 1 and max: 50' },
+				notEmpty: { args: true, msg: 'Minimum Quantity extension is required.' }
 			}
 		},
 		price: {

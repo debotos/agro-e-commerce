@@ -40,8 +40,10 @@ export default gql`
 	type Product {
 		id: ID!
 		name: String!
-		quantity: String!
+		quantity: Int! # This one is for Max quantity
 		quantity_extension: String!
+		min_quantity: Int!
+		min_quantity_extension: String!
 		price: Float!
 		price_extension: String!
 		available_now: Boolean!
@@ -74,6 +76,8 @@ export default gql`
 		name: String!
 		quantity: Int!
 		quantity_extension: String!
+		min_quantity: Int!
+		min_quantity_extension: String!
 		price: Float!
 		price_extension: String!
 		available_now: Boolean!
