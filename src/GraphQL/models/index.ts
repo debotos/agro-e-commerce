@@ -20,7 +20,8 @@ const models: { [key: string]: any } = {
 	User: sequelize.import('./user'),
 	Message: sequelize.import('./message'),
 	Category: sequelize.import('./category'),
-	Product: sequelize.import('./product')
+	Product: sequelize.import('./product'),
+	Order: sequelize.import('./order')
 }
 
 Object.keys(models).forEach(key => {

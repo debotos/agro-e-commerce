@@ -5,6 +5,7 @@ import userSchema from './user'
 import messageSchema from './message'
 import categorySchema from './category'
 import productSchema from './product'
+import orderSchema from './order'
 
 const linkSchema = gql`
 	scalar Date
@@ -28,5 +29,6 @@ export default [
 	categorySchema,
 	productSchema,
 	messageSchema,
-	overviewSchema
+	overviewSchema,
+	orderSchema
 ]

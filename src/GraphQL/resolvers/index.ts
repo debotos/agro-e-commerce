@@ -5,6 +5,7 @@ import userResolvers from './user'
 import messageResolvers from './message'
 import categoryResolvers from './category'
 import productResolvers from './product'
+import orderResolvers from './order'
 
 const customScalarResolver = {
 	Date: GraphQLDateTime
@@ -16,5 +17,6 @@ export default [
 	messageResolvers,
 	categoryResolvers,
 	productResolvers,
-	overviewResolvers
+	overviewResolvers,
+	orderResolvers
 ]

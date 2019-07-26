@@ -41,7 +41,9 @@ export default {
 			})
 		},
 		user: async (_: any, { id }: any, { models }: any) => {
-			return await models.User.findByPk(id, { raw: true })
+			const user = await models.User.findByPk(id, { raw: true })
+			if (!user) throw new UserInputError('Account of this user has been deleted.')
+			return user
 		},
 		me: async (_: any, __: any, { models, me }: any) => {
 			if (!me) return null
