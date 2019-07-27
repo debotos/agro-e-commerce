@@ -36,8 +36,8 @@ export const UserWithMessageData = [
 	},
 	{
 		user_name: 'sourav',
-		email: 'souravcse@gmail.com',
-		password: 'souravcse',
+		email: 'souravcse94@gmail.com',
+		password: 'Sourav1122',
 		role: 'ADMIN',
 		full_name: 'Sourav Das',
 		phone: '01715761574',
