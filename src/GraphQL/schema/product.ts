@@ -9,6 +9,8 @@ export default gql`
 			searchText: String
 			categoryId: String
 			userId: String
+			region: String
+			division: String
 		): ProductConnection!
 		product(id: ID!): Product
 	}

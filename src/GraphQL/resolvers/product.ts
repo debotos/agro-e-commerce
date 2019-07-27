@@ -13,7 +13,7 @@ export default {
 	Query: {
 		products: async (
 			_: any,
-			{ limit = 10, offset = 0, cursor, searchText, categoryId, userId }: any,
+			{ limit = 10, offset = 0, cursor, searchText, categoryId, userId, division, region }: any,
 			{ models }: any
 		) => {
 			/* 
@@ -66,6 +66,40 @@ export default {
 					options.where = { ...query }
 				}
 			}
+
+			/* Have to test (start) */
+			if (region && !division) {
+				const Op = Sequelize.Op
+				options.include = [
+					{
+						model: models.User,
+						where: { region: { [Op.iLike]: `%${region}%` } },
+						attributes: []
+					}
+				]
+			}
+			if (!region && division) {
+				const Op = Sequelize.Op
+				options.include = [
+					{
+						model: models.User,
+						where: { division: { [Op.iLike]: `%${division}%` } },
+						attributes: []
+					}
+				]
+			}
+			// Same as upper
+			if (region && division) {
+				const Op = Sequelize.Op
+				options.include = [
+					{
+						model: models.User,
+						where: { division: { [Op.iLike]: `%${division}%` } },
+						attributes: []
+					}
+				]
+			}
+			/* Have to test (end) */
 
 			const products = await models.Product.findAll({
 				order: [

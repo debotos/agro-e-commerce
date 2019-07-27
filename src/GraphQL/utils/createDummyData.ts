@@ -2,25 +2,27 @@ import * as Data from './dummyStore'
 
 const addDummyData = async (models: any) => {
 	/* 1. User & Message */
-	let userId
+	let userIds: string[] = []
 	for (let entry of Data.UserWithMessageData) {
-		if (entry.user_name === 'debotos') {
-			const user = await models.User.create(entry, {
-				include: [models.Message]
-			})
-			userId = user.id
-		} else {
-			await models.User.create(entry, {
-				include: [models.Message]
-			})
+		const user = await models.User.create(entry, {
+			include: [models.Message]
+		})
+		for (let index = 0; index < 2; index++) {
+			userIds.push(user.id)
 		}
 	}
 
 	/* 2. Category & Products */
-	for (let entry of Data.CategoryWithProductData(userId)) {
-		await models.Category.create(entry, {
+	let count = 0
+	for (let entry of Data.CategoryWithProductData()) {
+		const data = {
+			...entry,
+			products: entry.products.map((x: any) => ({ ...x, userId: userIds[count] }))
+		}
+		await models.Category.create(data, {
 			include: [models.Product]
 		})
+		count++
 	}
 }
 
