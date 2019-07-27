@@ -11,7 +11,7 @@ export default gql`
 		signUp(data: signUpInput): Token!
 		signIn(login: String!, password: String!): Token!
 		changeProfileImage(image: Upload!): ChangeProfileImage!
-		updateProfile(data: updateProfileInput): User!
+		updateProfile(data: updateProfileInput): UpdateProfile!
 		changeUserRole(id: ID!, role: Role!): User!
 		changePassword(currentPassword: String!, newPassword: String!): Token!
 		deleteUser(id: ID!): Boolean!
@@ -24,6 +24,11 @@ export default gql`
 
 	type ChangeProfileImage {
 		image: Image!
+		token: String!
+	}
+
+	type UpdateProfile {
+		user: User!
 		token: String!
 	}
 

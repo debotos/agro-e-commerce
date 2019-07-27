@@ -64,3 +64,11 @@ export const notifySuccess = msg => {
 		description: msg
 	})
 }
+
+export const notifyInfo = msg => {
+	notification.info({
+		message: `Please Check!`,
+		description: msg,
+		duration: 10
+	})
+}

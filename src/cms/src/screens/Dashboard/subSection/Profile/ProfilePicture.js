@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-
 import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
 import Avatar from '@atlaskit/avatar'
-import './index.css'
+import { Spin } from 'antd'
 
 import { notifyGraphQLError, notifySuccess } from '../../../../utils/notify'
 import { Column } from '../../../../components/Common'
-import Loading from '../../../../components/Loading'
+import cropCloudinayImage from '../../../../utils/cropImage'
+import './index.css'
 
 const CHANGE_PROFILE_IMAGE = gql`
 	mutation($image: Upload!) {
@@ -41,14 +41,14 @@ class ProfilePicture extends Component {
 				}}
 			>
 				{(changeProfileImage, { loading, data }) => {
-					if (loading) return <Loading />
+					if (loading) return <Spin style={{ marginLeft: '15px' }} size="small" />
 					return (
 						<>
 							<Column>
 								<Avatar
 									name={user.user_name}
 									size="xxlarge"
-									src={user.image}
+									src={cropCloudinayImage(user.image, 210, 210)}
 									borderColor="transparent"
 									isActive={false}
 									isHover={false}

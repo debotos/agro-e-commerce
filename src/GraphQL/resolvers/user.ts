@@ -196,7 +196,7 @@ export default {
 
 		updateProfile: combineResolvers(
 			isAuthenticated,
-			async (_: any, { data }: any, { me, models }: any) => {
+			async (_: any, { data }: any, { me, models, jwtSecret }: any) => {
 				if (Object.keys(data).length === 0) {
 					throw new UserInputError('Provide the data to update.')
 				}
@@ -224,7 +224,7 @@ export default {
 				)
 				logger.info(`${rowsUpdate} Profile data updata associated with id: ${id}`)
 
-				return updatedUser
+				return { token: createToken(updatedUser, jwtSecret, expiresTime), user: updatedUser }
 			}
 		),
 
