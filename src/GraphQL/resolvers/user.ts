@@ -114,6 +114,34 @@ export default {
 			return { token: createToken(user, jwtSecret, expiresTime) }
 		},
 
+		addUser: combineResolvers(
+			isAdmin,
+			async (_: any, { data }: any, { models, jwtSecret }: any) => {
+				/* Simple Validation */
+				/* This is also handled by DB Model. But to make the calculation shorter it's here */
+				if (data.password.toString().length < MIN_PASSWORD_LENGTH) {
+					throw new UserInputError(
+						`Passwords must be at least ${MIN_PASSWORD_LENGTH} characters long.`
+					)
+				}
+
+				if (!data.phone) throw new UserInputError(`Invalid phone number.`)
+				/* To catch NAN value error */
+				try {
+					if (!phoneUtil.isValidNumber(phoneUtil.parse(data.phone))) {
+						throw new UserInputError(`Invalid phone number.`)
+					}
+				} catch (error) {
+					logger.error(error.message)
+					throw new UserInputError(error.message)
+				}
+
+				const user = await models.User.create(data)
+
+				return { token: createToken(user, jwtSecret, expiresTime) }
+			}
+		),
+
 		signIn: async (_: any, { login, password }: any, { models, jwtSecret }: any) => {
 			const user = await models.User.findByLogin(login)
 

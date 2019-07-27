@@ -80,6 +80,12 @@ class UsersList extends Component {
 											<Mutation
 												mutation={DELETE_USER}
 												refetchQueries={() => [{ query: GET_OVERVIEW }]}
+												onError={error => {
+													const notice = notifyGraphQLError(error)
+													if (notice && notice.logoutAction) {
+														setTimeout(() => setUser(null), 3500)
+													}
+												}}
 												update={(cache, { data: { deleteUser } }) => {
 													const { users } = cache.readQuery({ query: GET_USERS })
 													if (deleteUser.success) {

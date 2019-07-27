@@ -48,7 +48,7 @@ class ProfilePicture extends Component {
 								<Avatar
 									name={user.user_name}
 									size="xxlarge"
-									src={cropCloudinayImage(user.image, 210, 210)}
+									src={user.image ? cropCloudinayImage(user.image, 210, 210) : null}
 									borderColor="transparent"
 									isActive={false}
 									isHover={false}

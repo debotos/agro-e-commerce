@@ -4,6 +4,7 @@
   color: transparent;
   border: none;
   outline: none;
+  font-family: 'Fira Sans', sans-serif;
 }
 .custom-profile-image-input::-webkit-file-upload-button {
   visibility: hidden;

@@ -9,6 +9,7 @@ export default gql`
 
 	extend type Mutation {
 		signUp(data: signUpInput): Token!
+		addUser(data: signUpInput): Token! # For admin only
 		signIn(login: String!, password: String!): Token!
 		changeProfileImage(image: Upload!): ChangeProfileImage!
 		updateProfile(data: updateProfileInput): UpdateProfile!

@@ -63,6 +63,7 @@ class ChangePassword extends Component {
 										if (strongRegex.test(values.new)) {
 											changePassword({ variables: { ...values } })
 											this.props.form.resetFields()
+											this.props.form.validateFields()
 										} else {
 											notifyInfo(
 												'Passowrd minimum length is 8 including a Uppercase, a Lowercase, a Number and a Special character.'
