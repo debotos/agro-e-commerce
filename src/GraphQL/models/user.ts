@@ -40,7 +40,7 @@ const user = (sequelize: any, DataTypes: any) => {
 			unique: { args: true, msg: 'Phone number belongs to someone else!' },
 			allowNull: false,
 			validate: {
-				len: { args: [11, 13], msg: 'Phone number length is invalid.' },
+				len: { args: [11, 14], msg: 'Phone number length is invalid.' },
 				notEmpty: { args: true, msg: 'Phone number is required.' }
 			}
 		},
