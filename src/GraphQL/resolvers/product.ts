@@ -169,6 +169,7 @@ export default {
 			isAuthenticated,
 			isProductOwner,
 			async (_: any, { id, image }: any, { me, models }: any) => {
+				console.log('[addProductImage]Server got the image to upload => ', image)
 				const { createReadStream }: any = await image
 				const stream = createReadStream()
 				const path = `${me.role}/${me.user_name}/products/${id}`
@@ -195,8 +196,10 @@ export default {
 			isAuthenticated,
 			isProductOwner,
 			async (_: any, { id, images }: any, { me, models }: any) => {
+				console.log('[addProductImages]Server got the images => ', images)
 				const { resolve, reject } = await promisesAll.all(
 					images.map(async (image: any) => {
+						console.log('[addProductImages]Single image => ', image)
 						const { createReadStream }: any = await image
 						const stream = createReadStream()
 						const path = `${me.role}/${me.user_name}/products/${id}`

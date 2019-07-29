@@ -183,6 +183,7 @@ export default {
 					await deleteImages(public_ids)
 					logger.info(`Profie image deleted of user ${user.email}`)
 				}
+				console.log('[changeProfileImage]Server got the image to upload => ', image)
 				const { createReadStream }: any = await image
 				const stream = createReadStream()
 				const path = `${me.role}/${me.user_name}`
