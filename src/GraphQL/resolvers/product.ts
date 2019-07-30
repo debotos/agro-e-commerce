@@ -8,6 +8,7 @@ import { isAuthenticated, isProductOwner } from './middleware/authorization'
 import { toCursorHash, fromCursorHash } from '../utils/cursor'
 import { uploadOneImage, deleteImages } from '../utils/cloudinary'
 import logger from '../../common/logger'
+import { AuthenticationError } from 'apollo-server-express'
 
 export default {
 	Query: {
@@ -142,6 +143,8 @@ export default {
 			async (_: any, { data }: any, { me, models }: any) => {
 				const category = await models.Category.findByPk(data.categoryId, { raw: true })
 				if (!category) throw new UserInputError('Invalid categoryId.')
+				const user = await models.User.findByPk(me.id, { raw: true })
+				if (!user) throw new AuthenticationError('Your account has been deleted.')
 				return await models.Product.create({
 					...data,
 					userId: me.id
