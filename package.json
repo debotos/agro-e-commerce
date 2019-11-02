@@ -44,7 +44,7 @@
 		"morgan": "^1.9.1",
 		"pg": "^7.11.0",
 		"promises-all": "^1.0.0",
-		"sequelize": "^5.9.0",
+		"sequelize": "^5.15.1",
 		"typescript": "^3.5.2",
 		"uuid": "^3.3.2",
 		"winston": "^3.2.1"
